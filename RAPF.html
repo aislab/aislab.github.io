@@ -1,0 +1,292 @@
+
+<style type="text/css">
+.centerImage
+{
+ text-align:center;
+ display:block;
+}
+</style>
+
+<style>
+#authors a {
+  margin: 0 20px;
+  font-size: 20px;
+}
+h1 {
+  font-size: 30px;
+  font-weight: 500;
+}
+h2 {
+  font-size: 40px;
+  font-weight: 400;
+  margin-bottom: 10px;
+}
+h3 {
+  font-size: 35px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+abs {
+  font-size: 35px;
+  font-weight: 300;
+}
+b1 {
+  font-size: 17px;
+  font-weight: 400;
+}
+cap {
+  font-size: 15px;
+  font-weight: 800;
+}
+refs {
+  font-size: 15px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.column {
+  float: left;
+  width: 25%;
+  padding: 5px;
+}
+
+/* Clearfix (clear floats) */
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.boxshadow {
+  border: 1px solid;
+  padding: 10px;
+  box-shadow: 2px 2px 5px #888888;
+}
+
+.hangingindent {
+  padding-left: 28px;
+  text-indent: -28px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+</style>
+
+<!DOCTYPE html>
+<html>
+<head>
+
+<style>
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+<style>
+.center {
+    text-align: center;
+    width: 1000px;
+    padding: 5px 5px;
+    margin: 5px auto;
+    background-color: white;
+    <!-- box-shadow: 0px 0px 10px #999; -->
+    border-radius: 15px;
+    font-family: "Google Sans"
+}
+</style>
+
+
+<style>
+.left {
+    text-align: left;
+    width: 1000px;
+    padding: 5px 5px;
+    margin: 5px auto;
+    background-color: white;
+    <!-- box-shadow: 0px 0px 10px #999; -->
+    border-radius: 15px;
+    font-family: "Google Sans"
+}
+</style>
+
+<style>
+.authors {
+  text-align: center;
+  margin: 0 10px;
+}
+</style>
+
+</head>
+
+<body>
+<div class="center">
+
+<body>
+
+<h1>
+    <strong>
+        Recognising Affordances in Predicted Futures to Plan with Consideration of Non-canonical Affordance Effects
+    </strong>
+</h1>
+
+<b1>
+<p id="authors">
+    <a>Solvi Arnold<sup>1</sup>&emsp;Mami Kuroishi<sup>2</sup>&emsp;Rin Karashima<sup>2</sup>&emsp;Tadashi Adachi<sup>2</sup>&emsp;Kimitoshi Yamazaki<sup>1</sup></a>
+    <br><br>
+    <sup>1</sup><a href="http://www.ais.shinshu-u.ac.jp">Autonomous Intelligence and Systems Lab, Shinshu University</a><br>
+    <sup>2</sup><a href="https://avasys.jp">EPSON Avasys</a>
+<p>
+</b1>
+<br>
+
+
+<h2>Abstract</h2>
+<strong>We propose a novel system for action sequence planning based on a combination of affordance recognition and a neural forward model predicting the effects of affordance execution. By performing affordance recognition on predicted futures, we avoid reliance on explicit affordance effect definitions for multi-step planning. Because the system learns affordance effects from experience data, the system can foresee not just the canonical effects of an affordance, but also situation-specific side-effects. This allows the system to avoid planning failures due to such non-canonical effects, and makes it possible to exploit non-canonical effects for realising a given goal. We evaluate the system in simulation, on a set of test tasks that require consideration of canonical and non-canonical affordance effects.
+<br>
+<br>
+<a href="https://ieeexplore.ieee.org/document/10025365">Paper link</a><br>
+</strong>
+</div>
+
+<div class="left">
+<hr>
+<h2>Background</h2>
+<b1>
+<p>Affordance-based planning operates by recognising affordances in a scene and reasoning over affordance effects. Recognition of affordances allows a planner to focus on limited sets of actions that are meaningful in a particular situation, instead of considering its full action repertoire in every situation.
+This semantically structures the problem space, and makes it possible to keep action planning tractable for complex scenes and high-dimensional action repertoires.</p>
+
+<p>Traditionally, the effects of affordances are specified semantically too, as symbolic rules.
+However, in many cases, fully formalising the possible outcomes of an action is impractical.
+For examples, placing object X on object Y may result in X being on Y, but only if that object configuration is stable.
+Whether an object configuration is stable or not is hard to formalise without coding ad-hoc physics into the affordance effect rules.
+Also, symbolic rules can only produce symbolic representations of future states. These lack the granularity required for accurately anticipating what affordances will become available or unavailable as a result of executing a given affordance.</p>
+</b1>
+
+<img src="images/background00.png" alt="Background" class="inline" width="1000" class="centerImage"/><br>
+
+<div class="center">
+<cap>
+Sensible symbolic rules can fail unexpectedly if physics is not taken into account.
+</cap>
+</div>
+<p>
+
+<hr>
+<h2>Approach</h2>
+<b1>
+<p>Our approach retains affordance recognition to structure the task domain.
+However, to avoid the limitations of symbolic effect rules, we replace effect rules by sub-symbolic prediction of affordance effects.
+Specifically, given a state image and a parametrised affordance, we predict the resulting state as an image.
+The ability to predict affordance effects is learned from experience data.
+This avoids the need for manual specification of affordance effects, and makes it possible to handle hard-to-formalise effects.</p>
+
+<p>The system thus combines two subsystems:
+<ol>
+  <li>A subsystem that takes a scene image as input and recognises the set of affordances available to the robot in a that scene.</li>
+  <li>A subsystem that takes a scene image and parametrised affordance as input and outputs an image prediction of the scene after execution of the affordance.</li>
+</ol></p>
+
+<p>Because predictions of post-execution states are images again, affordance sets for future states can be found by passing the predictions of those states through the recognition subsystem. By repeating affordance recognition and state prediction, we can expand a tree of possible futures, structured by affordances. Given a goal specification, we expand the tree to search for accessible future states that satisfy the goal. Here we use small images to specify goal conditions, and compare these goal images to regions of the predicted state images to match goals to predictions.</p>
+
+
+<img src="images/approach1_00.png" alt="Approach (1)" class="inline" width="800" class="centerImage"/><br>
+
+<p>
+Both the recognition and prediction subsystems are implemented as neural networks.
+For recognition we use a modified ScaledYOLOv4 network <a href="#ref1">[1]</a>.
+</p>
+<p>
+For prediction we use a modular architecture consisting of an encoder for mapping states to latent representations, a prediction module for performing prediction in latent space, and a decoder to map latent state predictions into images. This net is based on our EM*D architecture <a href="#ref2">[2]</a>.
+</p>
+<p>
+Prediction takes a differential approach. We predict 1) a mask image indicating which parts of the state image will change as a result of affordance execution, and 2) the new content for the changing regions. We merge the new content into the input state image on basis of the mask image, to obtain the new state prediction image.
+</p>
+<p>
+The prediction module contains a submodule for each affordance type. The affordance’s type determines which submodule is used, and its parametrisation (positional coordinates etc.) is given as additional input to the submodule.
+</p>
+
+<img src="images/approach2_00.png" alt="Approach (2)" class="inline" width="800" class="centerImage"/><br>
+
+<p>We test the system using a simulation environment containing a UR3 arm, blocks, cups and balls.
+The environment is constructed in Unity, and the UR3 is controlled via ROS.
+ROS-Unity integration is provided by the Unity Robotics Hub <a href="#ref3">[3]</a>.
+A view from a top-down RGBD camera provides state images for the recognition and prediction processes.
+We implement three affordances: grasping, placing, and turning. The turn affordance rotates an object in-place by 90 degrees.
+</p>
+<p>
+This simulation environment is also used to generate training data for the recognition and prediction networks.
+By performing sequences of affordances we obtain corresponding sequences of state images. These sequences are used to train the prediction network.
+We also store lists of all affordances available in each state, for training the recognition network.
+</p>
+
+<img src="images/approach3_00.png" alt="Approach (3)" class="inline" width="600" class="centerImage"/><br>
+
+</b1>
+
+<hr>
+<h2>Affordance Recognition</h2>
+
+<b1>
+<p>We perform affordance recognition in a form that is directly actionable for the robot. In addition to confidence and position coordinates, recognition results also provide a grasp angle for each affordance. Additionally, it includes a symmetry value indicating whether the grasp angle affects the outcome (to allow for efficiency improvements in the planning process).
+We constrain affordance recognition to affordances that can be performed by the robot <i>in its present state</i>. So, we take the current state of the robot into account. When the robot is holding something already, it can perform place affordances, but cannot grasp or turn objects. Conversely, when the robot is not holding something, it can perform grasp and turn affordances, but no place affordances. </p>
+</b1>
+
+<img src="images/recognition_00.png" alt="Recognition results" class="inline" width="1000" class="centerImage"/><br>
+
+<hr>
+<h2>Affordance Effect Prediction</h2>
+<b1>
+<p>
+The prediction network takes a state image and an affordance sequence as input, and predicts the sequence of state images that would result if that affordance sequence were performed from the input state. Below are examples of test sequences, alongside the corresponding predictions generated by the prediction network.
+
+</p>
+</b1>
+
+<img src="images/prediction_00.png" alt="Prediction results" class="inline" width="1000" class="centerImage" padding: 5px;/>
+
+<hr>
+<h2>Task Planning</h2>
+<b1>
+<p>
+Planning goals are provided as image patches that show the goal condition. For example, a goal patch may show the blue cup sitting on the yellow side of the coloured block.
+To generate a plan, we repeat affordance recognition and state prediction to expand a tree of possible futures. Each possible future state is expressed as a prediction of that state in image format. Recognition steps at the same depth in the tree can be parallelised, as can prediction steps. The quality of a plan (affordance sequence) is calculated as the difference between the goal patch and the region of the predicted state image that most closely matches the goal patch. Plan search selects the affordance sequence that minimises this difference.
+</p>
+
+<p>
+We can also perform planning with negative goals. In this case the system has to find a plan to <i>stop</i> the condition shown in the goal patch from holding. This is achieved by maximising instead of minimising the difference with the goal patch.
+</p>
+
+<p>
+The video below shows plans generated and executed for 10 test tasks.
+</p>
+</b1>
+
+<div class="center">
+<iframe width="1000" height="563"
+<!-- <iframe width="1280" height="720" -->
+src="https://www.youtube.com/embed/4naJ5IghHcg">
+</iframe>
+</div>
+<br>
+
+<hr>
+<h3>Paper</h3>
+Full paper available <a href="https://ieeexplore.ieee.org/document/10025365">here</a>.<br><br>
+<u>Cite as:</u><br>
+Solvi Arnold, Mami Kuroishi, Rin Karashima, Tadashi Adachi and Kimitoshi Yamazaki, "Recognising Affordances in Predicted Futures to Plan With Consideration of Non-Canonical Affordance Effects," in IEEE Robotics and Automation Letters, vol. 8, no. 3, pp. 1455-1462, March 2023, doi: 10.1109/LRA.2023.3239308.
+
+<hr>
+<h3>References</h3>
+<refs>
+<p class="hangingindent"><a id="ref1">[1]</a> Chien-Yao Wang, Alexey Bochkovskiy, and Hong-Yuan Mark Liao, "Scaled-YOLOv4: Scaling Cross Stage Partial Network", <a href="https://arxiv.org/abs/2011.08036">arXiv:2011.08036</a>, 2020.<br>
+<p class="hangingindent"><a id="ref2">[2]</a> Daisuke Tanaka, Solvi Arnold, and Kimitoshi Yamazaki, "EMD Net: An Encode–Manipulate–Decode Network for Cloth Manipulation", IEEE Robotics and Automation Letters, vol. 3, no. 3, pp. 1771-1778, July 2018, <a href="https://ieeexplore.ieee.org/document/8276243">doi: 10.1109/LRA.2018.2800122</a>.</p>
+<p class="hangingindent"><a id="ref3">[3]</a> Unity Robotics Hub. <a href="https://github.com/Unity-Technologies/Unity-Robotics-Hub">github.com/Unity-Technologies/Unity-Robotics-Hub</p>
+
+</refs>
+
+<br>
+</div>
